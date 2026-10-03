@@ -28,16 +28,29 @@ Each image is rebuilt only when its own Dockerfile changes (or on a `v*.*.*` rel
 
 ## CloudNative-PG
 
-Point your CNPG `Cluster` at the `-cnpg` image:
+CNPG derives the PostgreSQL major version from the `imageName` tag, which `latest-cnpg` doesn't carry. Declare it through an `ImageCatalog` and reference that from the `Cluster`:
 
 ```yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: ImageCatalog
+metadata:
+  name: postgres-pgtap
+spec:
+  images:
+    - major: 18
+      image: ghcr.io/robertomachorro/postgres-pgtap:latest-cnpg
+---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: pgtap
 spec:
   instances: 1
-  imageName: ghcr.io/robertomachorro/postgres-pgtap:latest-cnpg
+  imageCatalogRef:
+    apiGroup: postgresql.cnpg.io
+    kind: ImageCatalog
+    name: postgres-pgtap
+    major: 18
   storage:
     size: 1Gi
 ```
