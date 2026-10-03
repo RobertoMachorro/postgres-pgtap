@@ -1,0 +1,9 @@
+FROM ghcr.io/cloudnative-pg/postgresql:18.6-standard-trixie
+
+USER root
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends postgresql-18-pgtap \
+ && rm -rf /var/lib/apt/lists/*
+
+# CNPG runs PostgreSQL as UID 26 in its images.
+USER 26

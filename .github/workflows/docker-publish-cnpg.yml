@@ -1,0 +1,27 @@
+name: Docker (CNPG)
+
+# Builds the CloudNative-PG image (Dockerfile.cnpg) only when Dockerfile.cnpg changes.
+# Published to the same package with a -cnpg tag suffix (e.g. latest-cnpg).
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: [ "Dockerfile.cnpg" ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "Dockerfile.cnpg" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/build-image.yml
+    with:
+      dockerfile: Dockerfile.cnpg
+      tag-suffix: -cnpg
+      cache-scope: cnpg
